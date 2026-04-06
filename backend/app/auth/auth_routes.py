@@ -46,13 +46,12 @@ async def login(request: Request):
 
 @auth_router.get("/callback")
 async def callback(request: Request):
-    """
-    Handles Auth0 login callback.
-    Stores user infomation, access token, and refresh token in the session.
-    Redirects back to the frontend after successful login.
-    """
+    try:
+        token = await oauth.auth0.authorize_access_token(request)
+    except Exception as e:
+        print("Callback error:", e)
+        return RedirectResponse(url=f'{FRONTEND_URL}?error=login_failed')
 
-    token = await oauth.auth0.authorize_access_token(request)
     user_info = token.get("userinfo")
 
     if not user_info:
@@ -62,9 +61,10 @@ async def callback(request: Request):
     request.session["access_token"] = token.get("access_token")
     request.session["refresh_token"] = token.get("refresh_token")
 
+    print("Session saved for user:", user_info.get("email"))  # ← debug log
+    print("Session contents:", dict(request.session))         # ← debug log
 
     return RedirectResponse(url=FRONTEND_URL)
-
 
 @auth_router.get("/me")
 async def me(request: Request):
