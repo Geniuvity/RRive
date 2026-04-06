@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:8000";
+// The below line works with both, on a local machine and on a server (like render)
+const BASE_URL =import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 export const sendMessage = async (message) => {
   const response = await fetch(`${BASE_URL}/chat`, {

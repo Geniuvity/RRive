@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+// The below line works with both, on a local machine and on a server (like render)
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -21,7 +24,7 @@ export function AuthProvider({ children }) {
       setGoogleConnected(true);
     }
 
-    fetch("http://localhost:8000/auth/me", { credentials: "include" })
+    fetch(`${BACKEND_URL}/auth/me`, { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         setUser(data);
@@ -37,7 +40,7 @@ export function AuthProvider({ children }) {
 
   const connectGoogle = async () => {
     try {
-      const res = await fetch("http://localhost:8000/auth/connect-google", {
+      const res = await fetch(`${BACKEND_URL}/auth/connect-google`, {
         credentials: "include",
         redirect: "manual",
       });
@@ -54,21 +57,21 @@ export function AuthProvider({ children }) {
 
       // Use window.location.replace instead of href to avoid back-button loop
       if (res.status === 307 || res.status === 302 || res.type === "opaqueredirect") {
-        window.location.replace("http://localhost:8000/auth/connect-google");
+        window.location.replace(`${BACKEND_URL}/auth/connect-google`);
         return;
       }
 
     } catch (err) {
-      window.location.replace("http://localhost:8000/auth/connect-google");
+      window.location.replace(`${BACKEND_URL}/auth/connect-google`);
     }
   };
 
   const login = () => {
-    window.location.href = "http://localhost:8000/auth/login";
+    window.location.href = `${BACKEND_URL}/auth/login`;
   };
 
   const logout = () => {
-    window.location.href = "http://localhost:8000/auth/logout";
+    window.location.href = `${BACKEND_URL}/auth/logout`;
   };
 
   return (
