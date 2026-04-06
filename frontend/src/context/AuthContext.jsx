@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
 
       // Only connect Google if user exists and not in redirect flow
-      if (data && !returningFromGoogle) {
+      if (data && !returningFromGoogle && !googleConnected) {
          connectGoogle(); // keep commented until loop issue is fixed
       }
     })
