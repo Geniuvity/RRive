@@ -11,32 +11,38 @@ export function AuthProvider({ children }) {
   const [googleConnected, setGoogleConnected] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const returningFromGoogle = params.get("google_connected") === "true";
-    const connectFailed = params.get("error") === "connect_failed";
+  const params = new URLSearchParams(window.location.search);
+  const returningFromGoogle = params.get("google_connected") === "true";
+  const connectFailed = params.get("error") === "connect_failed";
 
-    // Clean URL params
-    if (returningFromGoogle || connectFailed) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
+  // Clean URL params
+  if (returningFromGoogle || connectFailed) {
+    window.history.replaceState({}, "", window.location.pathname);
+  }
 
-    if (returningFromGoogle) {
-      setGoogleConnected(true);
-    }
+  if (returningFromGoogle) {
+    setGoogleConnected(true);
+  }
 
-    fetch(`${BACKEND_URL}/auth/me`, { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        setUser(data);
-        setLoading(false);
+  fetch(`${BACKEND_URL}/auth/me`, { credentials: "include" })
+    .then((res) => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then((data) => {
+      setUser(data);
+      setLoading(false);
 
-        // Only trigger connect if logged in AND not returning from google flow
-        if (data && !returningFromGoogle && !connectFailed) {
-          connectGoogle();
-        }
-      })
-      .catch(() => setLoading(false));
-  }, []);
+      // Only connect Google if user exists and not in redirect flow
+      if (data && !returningFromGoogle) {
+        // connectGoogle(); // keep commented until loop issue is fixed
+      }
+    })
+    .catch(() => {
+      setUser(null);
+      setLoading(false);
+    });
+}, []);
 
   const connectGoogle = async () => {
     try {
