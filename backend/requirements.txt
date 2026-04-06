@@ -1,0 +1,22 @@
+# Core Framework
+fastapi==0.135.1
+uvicorn==0.42.0
+starlette==0.52.1
+
+# Authentication & Sessions
+Authlib==1.6.9
+itsdangerous==2.2.0
+cryptography==46.0.5
+
+# HTTP Requests
+requests==2.32.5
+httpx==0.28.1
+
+# Data Validation
+pydantic==2.12.5
+
+# Environment Variables
+python-dotenv==1.2.2
+
+# PDF Generation
+reportlab==4.4.10
