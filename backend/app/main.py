@@ -13,17 +13,25 @@ app = FastAPI()
 app.add_middleware(
     SessionMiddleware,
     secret_key=APP_SECRET_KEY,
-    https_only=False,
+    # For running on your local system, always --> https_only=False,
+    # For deploying on the server (like render), always --> https_only=True
+    https_only=True, 
     same_site="lax",
 )
 
+# Allows for both, local deployment, and server side deployment(like vercel).
+origins = [
+    "https://rrive.vercel.app",
+    "http://localhost:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(auth_router)
-app.include_router(router) 
+app.include_router(router)
