@@ -9,7 +9,8 @@ from app.config import APP_SECRET_KEY
 
 app = FastAPI()
 
-#Changing allow_origins from local host to domain for deployment
+# Changing allow_origins from localhost to domain for deployment
+# When deploying locally, don't forget to add allow_origins=["http://localhost:5173"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://rrive.vercel.app"],
