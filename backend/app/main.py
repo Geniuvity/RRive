@@ -16,18 +16,18 @@ app.add_middleware(
     # For running on your local system, always --> https_only=False,
     # For deploying on the server (like render), always --> https_only=True
     https_only=True, 
-    same_site="lax",
+    # same_site="lax" is only for local deployment, since we have backend and frontend server on different domain, samesite="none"
+    same_site="none",
+    max_age=3600,
 )
 
 # Allows for both, local deployment, and server side deployment(like vercel).
-origins = [
-    "https://rrive.vercel.app",
-    "http://localhost:5173",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://rrive.vercel.app",
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
